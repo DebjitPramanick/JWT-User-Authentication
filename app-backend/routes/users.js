@@ -7,7 +7,27 @@ const bcrypt = require("bcryptjs");
 const { check, validationResult } = require("express-validator");
 
 const UserSchema = require("../schemas/User.js");
-const User = require("../schemas/User.js");
+
+const auth = require("../middleware/auth.js")
+
+
+router.get(
+  '/',
+  auth,
+  async (req,res) => {
+    try {
+      const user = await UserSchema.findById(req.user.id).select('-password') ;
+      res.json(user)
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ msg: "Server error" });
+    }
+  }
+)
+
+
+
+
 
 router.post(
   "/register",
