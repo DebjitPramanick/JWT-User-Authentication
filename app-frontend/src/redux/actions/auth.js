@@ -13,7 +13,7 @@ export const AUTH_ERROR = "AUTH_ERROR";
 
 
 
-export const lodUser = () => async dispatch => {
+export const loadUser = () => async dispatch => {
 
     if(localStorage.getItem('token')){
         setToken(localStorage.getItem('token'))
@@ -28,7 +28,71 @@ export const lodUser = () => async dispatch => {
         })
     }
     catch(err){
-        console.log(err);
+        dispatch({type: AUTH_ERROR, payload: err});
     }
 
+}
+
+
+
+export const registerUser = (name,email,password) => async (dispatch) => {
+  try {
+
+    const config = {
+        header: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const data = {
+      name,
+      email,
+      password
+    }
+
+    console.log("Action is working.",data);
+
+    const res = await axios.post('http://localhost:5000/api/users/register',data, config);
+
+    dispatch({
+        type: REGISTER_SUCCESS,
+        payload: res.data
+    });
+
+
+    dispatch(loadUser());
+    
+  } catch (err) {
+    dispatch({ type: REGISTER_FAIL, payload: err });
+  }
+};
+
+
+
+
+export const loginUser = (email,password) => async (dispatch) => {
+    try {
+      const config = {
+        header: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const body = JSON.stringify({ email, password });
+
+      const res = await axios.post(
+        "http://localhost:5000/api/users/login",
+        body,
+        config
+      );
+
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data,
+      });
+
+      dispatch(loadUser());
+    } catch (err) {
+      dispatch({ type: LOGIN_FAIL, payload: err });
+    }
 }

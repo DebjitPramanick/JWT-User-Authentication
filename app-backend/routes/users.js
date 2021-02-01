@@ -45,7 +45,7 @@ router.post(
       }
 
       if (user) {
-        return res.status(401).json({ msg: "USer is already registered." });
+        return res.status(401).json({ msg: "User is already registered." });
       }
 
       // Securing password in the database --------------------------------------
@@ -77,6 +77,8 @@ router.post(
       jwt.sign(payload, config.get("jwtsecret"), (err, token) => {
         if (err) throw err;
         res.json({ token });
+
+        console.log(token)
       });
 
       // ------------------------------------------------------------------------
